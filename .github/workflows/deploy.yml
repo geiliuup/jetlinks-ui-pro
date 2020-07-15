@@ -15,10 +15,10 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
       - name: Cache npm Repository
-          uses: actions/cache@v1
-          with:
-            path: ./node_modules
-            key: jetlinks-pro-repository
+        uses: actions/cache@v1
+        with:
+          path: ./node_modules
+          key: jetlinks-pro-repository
       - name: Build 🔧
         run: |
           npm install

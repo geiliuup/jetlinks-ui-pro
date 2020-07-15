@@ -37,7 +37,8 @@
     "test": "umi test",
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "husky": {
     "hooks": {
@@ -92,6 +93,7 @@
     "carlo": "^0.9.46",
     "cross-env": "^7.0.0",
     "cross-port-killer": "^1.1.1",
+    "cz-conventional-changelog": "^3.2.0",
     "detect-installer": "^1.0.1",
     "eslint": "^7.2.0",
     "express": "^4.17.1",
@@ -135,5 +137,10 @@
       "CNAME",
       "create-umi"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

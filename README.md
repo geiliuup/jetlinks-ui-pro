@@ -1,8 +1,8 @@
 ## 使用
 
 ```bash
-$ git clone https://github.com/jetlinks/jetlinks-ui-antd.git
-$ cd jetlinks-ui-antd
+$ git clone https://github.com/jetlinks/jetlinks-ui-pro.git
+$ cd jetlinks-ui-pro
 $ npm install
 $ npm start         # visit http://localhost:8000
 ```
@@ -71,5 +71,5 @@ export default {
 我们非常欢迎你的贡献，你可以通过以下方式和我们一起共建 :smiley:：
 
 - 在你的公司或个人项目中使用 Jetlinks。
-- 通过 [Issue](https://github.com/jetlinks/jetlinks-ui-antd/issues) 报告 bug 或进行咨询。
-- 提交 [Pull Request](https://github.com/jetlinks/jetlinks-ui-antd//pulls) 改进 Jetlinks 的代码。
+- 通过 [Issue](https://github.com/jetlinks/jetlinks-ui-pro/issues) 报告 bug 或进行咨询。
+- 提交 [Pull Request](https://github.com/jetlinks/jetlinks-ui-pro/pulls) 改进 Jetlinks 的代码。

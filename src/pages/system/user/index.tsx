@@ -1,11 +1,15 @@
 import { PageContainer } from "@ant-design/pro-layout"
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import ProTable, { ProColumns, ActionType } from "@ant-design/pro-table";
-import { Tag, Button, Dropdown, Menu } from "antd";
+import { Tag, Button, Dropdown, Menu, message, Divider } from "antd";
 import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import { list } from "./service";
+import Save from "./save";
 
 const User: React.FC<{}> = () => {
+    const [saveVisible, setSaveVisible] = useState<boolean>(false);
+    const [current, setCurrent] = useState<Partial<USER.UserItem>>({});
+
     const actionRef = useRef<ActionType>();
     const columns: ProColumns<USER.UserItem>[] = [
         {
@@ -38,9 +42,42 @@ const User: React.FC<{}> = () => {
             renderText: (text: number) => <Tag color={text === 1 ? '#108ee9' : '#f50'}>{text === 1 ? '正常' : '已禁用'}</Tag>
         },
         {
-            title: '操作'
+            title: '操作',
+            render: (_, record) => (
+                <>
+                    <a onClick={() => {
+                        setCurrent(record);
+                        setSaveVisible(true)
+                    }}>
+                        编辑
+                    </a>
+                    <Divider type="vertical" />
+                    <a>赋权</a>
+                    <Divider type="vertical" />
+                    <a>删除</a>
+                </>
+            )
         }
     ];
+
+    /**
+     *  删除节点
+     * @param selectedRows
+     */
+    const handleRemove = async (selectedRows: USER.UserItem[]) => {
+        const hide = message.loading('正在删除');
+        if (!selectedRows) return true;
+        try {
+
+            hide();
+            message.success('删除成功，即将刷新');
+            return true;
+        } catch (error) {
+            hide();
+            message.error('删除失败，请重试');
+            return false;
+        }
+    };
 
     return (
         <PageContainer>
@@ -49,7 +86,7 @@ const User: React.FC<{}> = () => {
                 actionRef={actionRef}
                 rowKey="id"
                 toolBarRender={(action, { selectedRows }) => [
-                    <Button type="primary" onClick={() => handleModalVisible(true)}>
+                    <Button type="primary" onClick={() => setSaveVisible(true)}>
                         <PlusOutlined /> 新建
                     </Button>,
                     selectedRows && selectedRows.length > 0 && (
@@ -87,6 +124,14 @@ const User: React.FC<{}> = () => {
                 columns={columns}
                 rowSelection={{}}
             />
+            {
+                saveVisible && (
+                    <Save
+                        data={current}
+                        close={() => setSaveVisible(false)}
+                    />
+                )
+            }
         </PageContainer>
     )
 }

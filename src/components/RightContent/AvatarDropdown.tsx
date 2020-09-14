@@ -19,13 +19,14 @@ export interface GlobalHeaderRightProps {
  */
 const loginOut = async () => {
   await outLogin();
-  const { redirect } = getPageQuery();
+  const { query, pathname } = history.location;
+  const { redirect } = query
   // Note: There may be security issues, please note
   if (window.location.pathname !== '/user/login' && !redirect) {
     history.replace({
       pathname: '/user/login',
       search: stringify({
-        redirect: window.location.href,
+        redirect: pathname,
       }),
     });
   }
@@ -34,15 +35,23 @@ const loginOut = async () => {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
-  const onMenuClick = useCallback((event: ClickParam) => {
-    const { key } = event;
-    if (key === 'logout') {
-      setInitialState({ ...initialState, currentUser: undefined });
-      loginOut();
-      return;
-    }
-    history.push(`/account/${key}`);
-  }, []);
+  const onMenuClick = useCallback(
+    (event: {
+      key: React.Key;
+      keyPath: React.Key[];
+      item: React.ReactInstance;
+      domEvent: React.MouseEvent<HTMLElement>;
+    }) => {
+      const { key } = event;
+      if (key === 'logout' && initialState) {
+        setInitialState({ ...initialState, currentUser: undefined });
+        loginOut();
+        return;
+      }
+      history.push(`/account/${key}`);
+    },
+    [],
+  );
 
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>

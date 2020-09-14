@@ -15,7 +15,7 @@ export default defineConfig({
   layout: {
     name: 'Jetlinks Pro',
     locale: true,
-    siderWidth: 208,
+    // siderWidth: 208,
   },
   locale: {
     // default zh-CN

@@ -1,7 +1,6 @@
 import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
-import { Link, SelectLang, history, useModel } from 'umi';
-import { getPageQuery } from '@/utils/utils';
+import { Link, SelectLang, history, useModel, History } from 'umi';
 import logo from '@/assets/logo.svg';
 import Footer from '@/components/Footer';
 import LoginFrom from './components/Login';
@@ -27,53 +26,66 @@ const LoginMessage: React.FC<{
  * 此方法会跳转到 redirect 参数所在的位置
  */
 const replaceGoto = () => {
-  const urlParams = new URL(window.location.href);
-  const params = getPageQuery();
-  let { redirect } = params as { redirect: string };
-  if (redirect) {
-    const redirectUrlParams = new URL(redirect);
-    if (redirectUrlParams.origin === urlParams.origin) {
-      redirect = redirect.substr(urlParams.origin.length);
-      if (redirect.match(/^\/.*#/)) {
-        redirect = redirect.substr(redirect.indexOf('#') + 1);
-      }
-    } else {
-      window.location.href = '/';
+  setTimeout(() => {
+    const { query } = history.location;
+    const { redirect } = query as { redirect: string };
+    if (!redirect) {
+      history.replace('/');
       return;
     }
-  }
-  history.replace(redirect || '/');
+    (history as History).replace(redirect);
+  }, 10);
 };
+
 
 const Login: React.FC<{}> = () => {
   const [userLoginState, setUserLoginState] = useState<LOGIN.LoginStateType>({});
   const [submitting, setSubmitting] = useState(false);
 
-  const { refresh } = useModel('@@initialState');
+  const { initialState, setInitialState } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState<string>('account');
 
   const handleSubmit = async (values: LOGIN.LoginParamsType) => {
     setSubmitting(true);
 
-    // 登录
-    await login({ ...values, type }).then((msg: LOGIN.LoginStateType) => {
-      if (msg.code === 'success') {
+    try {
+      const msg = await login({ ...values, type });
+      if (msg.code === 'success' && initialState) {
         message.success('登录成功！');
-        localStorage.setItem('x-access-token', msg.result?.token || '');
-        replaceGoto();
-        setTimeout(() => {
-          refresh();
-        }, 0);
-        return;
+        // const currentUser = await initialState?.fetchUserInfo();
+        // setInitialState({
+        //   ...initialState,
+        //   currentUser,
+        // });
+        // replaceGoto();
+        // return;
+
       }
-      // 如果失败去设置用户错误信息
       setUserLoginState(msg);
-    }).catch(error => {
-      // message.error('登录失败，请重试！');
-    }).finally(() => {
-      setSubmitting(false);
-    })
+    } catch (error) {
+      message.error('登录失败，请重试！');
+    }
+    setSubmitting(false);
+    // 登录
+    // await login({ ...values, type }).then((msg: LOGIN.LoginStateType) => {
+    //   if (msg.code === 'success') {
+    //     message.success('登录成功！');
+
+    //     localStorage.setItem('x-access-token', msg.result?.token || '');
+    //     replaceGoto();
+    //     setTimeout(() => {
+    //       refresh();
+    //     }, 0);
+    //     return;
+    //   }
+    //   // 如果失败去设置用户错误信息
+    //   setUserLoginState(msg);
+    // }).catch(error => {
+    //   // message.error('登录失败，请重试！');
+    // }).finally(() => {
+    //   setSubmitting(false);
+    // })
 
   };
 
